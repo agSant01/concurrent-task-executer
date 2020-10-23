@@ -24,15 +24,11 @@ For running the proyect you can execute the created target binary directly or us
 
 #### Parameters
 
-<br>
-
 | Name | Type | Description |
 |-|-|-|
 | `tasks` | []func() (string, error) | An array of functions that receive no parameters and return a tuple of (`string`, `error`) |
 | `concurrent` | int | Specifies the number of maximum threads allowed. If there are more threads than `tasks` then each task will be executed in its own thread. |
 | `retry` | int | Specifies the maximum number of retries per tasks |
-
-<br>
 
 #### Description
 
@@ -42,13 +38,9 @@ A function that allocates tasks to a specified number of threads.
 
 #### Parameters
 
-<br>ObserveChannel( <-chan models.Result)
-
 | Name | Type | Description |
 |-|-|-|
 | `channel` | <-chan models.Result | The channel to monitor and receive messages from. |
-
-<br>
 
 #### Description
 
