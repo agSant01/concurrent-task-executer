@@ -2,37 +2,20 @@ package retry
 
 import (
 	"fmt"
-	"math/rand"
 	"testing"
-	"time"
 
-	"github.com/agsant01/concurrent-task-executer/pkg/counter"
-
-	"github.com/agsant01/concurrent-task-executer/internal/data"
-	"github.com/google/uuid"
+	"github.com/agsant01/concurrent-task-executer/internal/counter"
+	"github.com/agsant01/concurrent-task-executer/internal/task"
+	"github.com/agsant01/concurrent-task-executer/pkg/models"
 )
-
-func testTask() (string, error) {
-	id := uuid.New().String()
-	rand.Seed(int64(time.Now().Nanosecond()))
-	fail := rand.Intn(2)
-	sleep := rand.Intn(2) + 1
-	fmt.Println("[INFO testTask] Entering Task:", id, "Fail Mode:", fail, "Sleep for: ", sleep)
-	time.Sleep(time.Duration(sleep) * time.Second)
-	if fail == 1 {
-		return id, fmt.Errorf("[ERROR testTask] Task %v Failed", id)
-	}
-	fmt.Println("[INFO testTask] Ending Task:", id)
-	return id, nil
-}
 
 func TestRunTasksInThread(t *testing.T) {
 	fmt.Println("Starting Test...")
 	retry := 2
 
-	channelToTest := make(chan data.Result)
+	channelToTest := make(chan models.Result)
 
-	tasks := []func() (string, error){testTask, testTask, testTask}
+	tasks := []func() (string, error){task.Task, task.Task, task.Task}
 
 	flags := counter.New(1)
 
@@ -52,7 +35,7 @@ func TestRunTasksInThread(t *testing.T) {
 }
 
 func TestConcurrentRetryEven(t *testing.T) {
-	tasks := []func() (string, error){testTask, testTask, testTask, testTask, testTask, testTask}
+	tasks := []func() (string, error){task.Task, task.Task, task.Task, task.Task, task.Task, task.Task}
 	retry := 4
 
 	channelTest := ConcurrentRetry(tasks, 3, retry)
@@ -75,7 +58,7 @@ func TestConcurrentRetryEven(t *testing.T) {
 }
 
 func TestConcurrentRetryOdd(t *testing.T) {
-	tasks := []func() (string, error){testTask, testTask, testTask, testTask, testTask, testTask, testTask}
+	tasks := []func() (string, error){task.Task, task.Task, task.Task, task.Task, task.Task, task.Task, task.Task}
 	retry := 4
 
 	channelTest := ConcurrentRetry(tasks, 3, retry)
@@ -98,8 +81,8 @@ func TestConcurrentRetryOdd(t *testing.T) {
 }
 
 func TestMultipleConcurrentRetryOdd(t *testing.T) {
-	task1 := []func() (string, error){testTask, testTask}
-	task2 := []func() (string, error){testTask, testTask, testTask}
+	task1 := []func() (string, error){task.Task, task.Task}
+	task2 := []func() (string, error){task.Task, task.Task, task.Task}
 	retry := 4
 
 	ch1 := ConcurrentRetry(task1, 2, retry)

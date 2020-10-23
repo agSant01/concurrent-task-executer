@@ -3,11 +3,11 @@ package retry
 import (
 	"fmt"
 
-	"github.com/agsant01/concurrent-task-executer/internal/data"
+	"github.com/agsant01/concurrent-task-executer/pkg/models"
 )
 
 // ObserveChannel keeps an receiving and printing messages until channel is Closed
-func ObserveChannel(channel <-chan data.Result) {
+func ObserveChannel(channel <-chan models.Result) {
 	var resultIds []string
 	for {
 		val, ok := <-channel
@@ -21,5 +21,5 @@ func ObserveChannel(channel <-chan data.Result) {
 		}
 
 	}
-	fmt.Printf("[DEBUG ObserveChannel] Successes: %v IDs: %v\n", len(resultIds), resultIds)
+	fmt.Printf("[DEBUG ObserveChannel] Successes: %v | IDs: %v\n", len(resultIds), resultIds)
 }

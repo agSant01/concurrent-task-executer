@@ -1,4 +1,4 @@
-package data
+package models
 
 // Result is...
 type Result struct {

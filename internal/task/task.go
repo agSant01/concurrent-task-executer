@@ -25,14 +25,23 @@ func GetSimulatedTasks(quantitySimulatedTTasks int) []func() (string, error) {
 
 // Task is a...
 func Task() (string, error) {
+	id := uuid.New().String()
+
 	rand.Seed(int64(time.Now().Nanosecond()))
-	secondsToSleep := rand.Intn(2) + 2
 
-	var taskID = uuid.New().String()
+	fail := rand.Intn(2)
 
-	fmt.Printf("[INFO Task] Task Id: %v Will Sleep for %v seconds...\n", taskID, secondsToSleep)
+	sleep := rand.Intn(2) + 2
 
-	time.Sleep(time.Duration(secondsToSleep) * time.Second)
+	fmt.Println("[INFO Task] Entering Task:", id, "| Fail Mode:", fail, "| Will Sleep for: ", sleep)
 
-	return taskID, nil
+	time.Sleep(time.Duration(sleep) * time.Second)
+
+	if fail == 1 {
+		return id, fmt.Errorf("[ERROR Task] Task %v Failed", id)
+	}
+
+	fmt.Println("[INFO Task] Ending Task:", id)
+
+	return id, nil
 }

@@ -3,15 +3,15 @@ package retry
 import (
 	"fmt"
 
-	"github.com/agsant01/concurrent-task-executer/internal/data"
-	"github.com/agsant01/concurrent-task-executer/pkg/counter"
+	"github.com/agsant01/concurrent-task-executer/internal/counter"
+	"github.com/agsant01/concurrent-task-executer/pkg/models"
 )
 
 // ConcurrentRetry is...
-func ConcurrentRetry(tasks []func() (string, error), concurrent int, retry int) <-chan data.Result {
-	channelToReturn := make(chan data.Result)
+func ConcurrentRetry(tasks []func() (string, error), concurrent int, retry int) <-chan models.Result {
+	channelToReturn := make(chan models.Result)
 
-	go func(channel chan<- data.Result, tasks []func() (string, error), concurrent int, retry int) {
+	go func(channel chan<- models.Result, tasks []func() (string, error), concurrent int, retry int) {
 		threadsTasks := make([][]func() (string, error), concurrent)
 
 		threadFinishedFlag := counter.New(len(threadsTasks))
@@ -31,7 +31,7 @@ func ConcurrentRetry(tasks []func() (string, error), concurrent int, retry int) 
 	return channelToReturn
 }
 
-func verifyThreadsCompletion(channel chan<- data.Result, flags *counter.ThreadCounter) {
+func verifyThreadsCompletion(channel chan<- models.Result, flags *counter.ThreadCounter) {
 	for {
 		if flags.AreCompleted() {
 			close(channel)
@@ -40,7 +40,7 @@ func verifyThreadsCompletion(channel chan<- data.Result, flags *counter.ThreadCo
 	}
 }
 
-func runTasksInThread(channel chan<- data.Result, concurrentTasks []func() (string, error), retry int, threadID int, threadFlag *counter.ThreadCounter) {
+func runTasksInThread(channel chan<- models.Result, concurrentTasks []func() (string, error), retry int, threadID int, threadFlag *counter.ThreadCounter) {
 	fmt.Println("[INFO runTasksInThread] Entering Thread:", threadID, "Tasks:", len(concurrentTasks))
 
 	for idx, taskFunc := range concurrentTasks {
@@ -51,7 +51,7 @@ func runTasksInThread(channel chan<- data.Result, concurrentTasks []func() (stri
 			result, resErr := taskFunc()
 			if resErr == nil {
 				fmt.Printf("[DEBUG runTasksInThread] Thread: %v Task: %v Sending back throught channel %v...\n", threadID, idx, channel)
-				channel <- data.Result{Index: idx, Result: result, ID: result}
+				channel <- models.Result{Index: idx, Result: fmt.Sprintf("ThreadId: %v | Index: %v", threadID, idx), ID: result}
 				break
 			} else {
 				retries++

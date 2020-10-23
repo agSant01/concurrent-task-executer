@@ -16,7 +16,7 @@ func TestCreateTask(t *testing.T) {
 	fmt.Println(end.Sub(start).Seconds())
 
 	if end.Sub(start).Seconds() < 2 {
-		t.Errorf("yup")
+		t.Errorf("Not waited enough time.")
 	}
 }
 
@@ -38,7 +38,7 @@ func TestGetSimulatedTasks(t *testing.T) {
 		simulationTime := time.Now().Sub(totalStart)
 		fmt.Printf("Simulation: %v | Took %v\n", simulation, simulationTime)
 
-		if float64(2*amount) > simulationTime.Seconds() {
+		if simulationTime.Seconds() < float64(amount*2) {
 			t.Errorf("Error")
 		}
 	}
